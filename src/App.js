@@ -1,24 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import InvoicesList from "./pages/InvoicesList";
+import CreateInvoice from "./pages/CreateInvoice";
+import InvoiceDetailsPage from "./pages/InvoiceDetailsPage";
+import EditeInvoice from "./pages/EditInvoice";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ToastContainer />
+      <Provider store={store}>
+        <div className="App">
+          <div className="container">
+            <BrowserRouter>
+              <Routes>
+                <Route
+                  path="/"
+                  element={<InvoicesList />}
+                />
+                <Route
+                  path="/create-invoice"
+                  element={<CreateInvoice />}
+                />
+                <Route
+                  path="/invoice-details/:id"
+                  element={<InvoiceDetailsPage />}
+                />
+                <Route
+                  path="/edite-invoice/:id"
+                  element={<EditeInvoice />}
+                />
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </div>
+      </Provider>
+    </>
   );
 }
 

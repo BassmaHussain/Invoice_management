@@ -1,3 +1,82 @@
+# Invoice Management (React)
+
+A small invoice management SPA built with React, Redux Toolkit and Tailwind CSS. It supports creating, editing, viewing and deleting invoices, persisting data to localStorage, and simple invoice calculations (subtotal / tax / total).
+
+## Quick start
+
+Prerequisites: Node 18+ / npm
+
+Install and run:
+
+```sh
+npm install
+npm start
+```
+
+## Features
+
+Create, edit and delete invoices.
+Update invoice status (Draft, Sent, Paid).
+Line-item invoices with quantity, unit price, subtotal, tax and total.
+Persist invoices to browser localStorage (key: invoices).
+Client-side validation and responsive UI.
+
+## Project structure (key files)
+
+src/
+components/
+InvoiceForm/InvoiceForm.jsx — create/edit form + InvoiceItemInput
+InvoiceTable/InvoiceTable.jsx — listing table
+InvoiceDetails/InvoiceDetails.jsx — single invoice view
+DeleteConfirmModal.jsx — deletion confirmation
+pages/
+InvoicesList.jsx — main list and actions
+CreateInvoice.jsx — page wrapper for create
+EditInvoice.jsx — page wrapper for edit
+InvoiceDetailsPage.jsx — details page
+store/
+invoicesSlice.js — Redux slice: add/edit/delete/updateStatus/getSingleInvoice; includes TAX rate in initial state
+index.js — store configuration
+utils/
+calculations.js — calculateSubtotal, calculateTax, calculateTotal
+localStorage.js — loadFromLocalStorage, saveToLocalStorage
+App.js — routes and route declarations
+index.js — app entry
+**Notes: Tailwind configuration is in tailwind.config.js and styles are imported in src/index.css.**
+
+## Data model (invoice)
+
+id (string)
+invoiceNumber (string)
+clientName, clientAddress
+issueDate, dueDate
+items: [{ id, name, quantity, unitPrice }]
+status: "Draft" | "Sent" | "Paid"
+subtotal, tax, total, tax_rate (computed/stored)
+
+## Persistence & calculations
+
+Invoices are saved to localStorage via utils/localStorage.js.
+Subtotal = sum(item.quantity _ item.unitPrice).
+Tax uses TAX_RATE (from slice initial state); tax = subtotal _ tax_rate.
+Total = subtotal + tax.
+
+## Tests
+
+Test setup: src/setupTests.js
+Run with: npm test
+
+## Known issues / TODO
+
+Route typo: edit route is declared as /edite-invoice/:id and maps to Edit page (file: src/pages/EditInvoice.jsx) — consider renaming route for consistency.
+Consider switching persistence to a backend API for multi-user scenarios.
+Add more unit/integration tests for reducer edge cases and form validation.
+
+## Contributing
+
+Open an issue or submit a PR.
+Follow existing code patterns and add tests for new behavior.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
