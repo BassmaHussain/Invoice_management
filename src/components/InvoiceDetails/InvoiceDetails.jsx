@@ -2,9 +2,6 @@ import react from "react";
 import { format } from "date-fns";
 import StatusBadge from "./StatusBadge";
 const InvoiceDetails = ({ selectedInvoice }) => {
-  const formatDate = (dateString) => {
-    return format(new Date(dateString), "dd-MM-yyyy");
-  };
   return (
     <>
       {" "}
@@ -27,14 +24,18 @@ const InvoiceDetails = ({ selectedInvoice }) => {
           <li className="p-3 hover:bg-gray-50 flex flex-row gap-2">
             <p className="font-medium">Issue Date :</p>
             <p className="text-sm text-gray-500">
-              {formatDate(selectedInvoice?.issueDate)}
+              {selectedInvoice?.issueDate
+                ? format(new Date(selectedInvoice?.issueDate), "dd-MM-yyyy")
+                : ""}
             </p>
           </li>
 
           <li className="p-3 hover:bg-gray-50 flex flex-row gap-2">
             <p className="font-medium">Due Date :</p>
             <p className="text-sm text-gray-500">
-              {formatDate(selectedInvoice?.dueDate)}
+              {selectedInvoice?.dueDate
+                ? format(new Date(selectedInvoice?.dueDate), "dd-MM-yyyy")
+                : ""}
             </p>
           </li>
 

@@ -15,11 +15,12 @@ npm start
 
 ## Features
 
-Create, edit and delete invoices.
-Update invoice status (Draft, Sent, Paid).
-Line-item invoices with quantity, unit price, subtotal, tax and total.
-Persist invoices to browser localStorage (key: invoices).
-Client-side validation and responsive UI.
+- Create, edit, delete invoices; change status (Draft / Sent / Paid)
+- Line-item support with validation (quantity, unit price)
+- Auto-calculated subtotal, tax (uses TAX_RATE), and total
+- Persistence to localStorage (key: `invoices`) with simple swap-to-API surface
+- Responsive UI, accessible forms, and unit tests for core logic
+- Developer-friendly: small Redux slice, isolated utility functions, easy test coverage
 
 ## Project structure (key files)
 
@@ -46,20 +47,20 @@ index.js — app entry
 
 ## Data model (invoice)
 
-id (string)
-invoiceNumber (string)
-clientName, clientAddress
-issueDate, dueDate
-items: [{ id, name, quantity, unitPrice }]
-status: "Draft" | "Sent" | "Paid"
-subtotal, tax, total, tax_rate (computed/stored)
+- id: string
+- invoiceNumber: string
+- clientName, clientAddress
+- issueDate, dueDate (ISO strings)
+- items: [{ id, name, quantity, unitPrice }]
+- status: "Draft" | "Sent" | "Paid"
+- subtotal, tax_rate, tax, total (numbers; subtotal/tax/total computed)
 
 ## Persistence & calculations
 
-Invoices are saved to localStorage via utils/localStorage.js.
-Subtotal = sum(item.quantity _ item.unitPrice).
-Tax uses TAX_RATE (from slice initial state); tax = subtotal _ tax_rate.
-Total = subtotal + tax.
+- Subtotal = sum(item.quantity \* item.unitPrice)
+- Tax = subtotal \* TAX_RATE (TAX_RATE in src/store/invoicesSlice.js)
+- Total = subtotal + tax
+- Saved to localStorage under key `invoices`
 
 ## Tests
 

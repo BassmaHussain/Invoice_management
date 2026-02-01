@@ -43,7 +43,7 @@ const CreateInvoice = () => {
   return (
     <div className="flex flex-col gap-6 justify-start">
       <div className="flex justify-between border-b pb-3">
-        <h2 className="text-2xl font-bold mb-4">Create New Invoice</h2>
+        <h2 className="text-2xl font-bold ">Create New Invoice</h2>
         <button
           onClick={() => {
             navigate("/");

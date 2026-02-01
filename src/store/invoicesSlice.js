@@ -21,7 +21,11 @@ const invoiceSlice = createSlice({
       const { id } = action.payload;
 
       state.selectedInvoice =
-        state.invoices.find((invoice) => invoice.invoiceNumber === id) || null;
+        state?.invoices?.find((invoice) => invoice?.invoiceNumber === id) ||
+        null;
+    },
+    clearSelectedInvoice: (state) => {
+      state.selectedInvoice = null;
     },
     // add invoice
     addInvoice: (state, action) => {
@@ -81,6 +85,7 @@ export const {
   setInvoices,
   getSingleInvoice,
   updateStatus,
+  clearSelectedInvoice,
 } = invoiceSlice.actions;
 
 export default invoiceSlice.reducer;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import DatePicker from "react-datepicker";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { RiDeleteBinLine } from "react-icons/ri";
 import "react-datepicker/dist/react-datepicker.css";
 import InvoiceItemInput from "./InvoiceItemInput";
@@ -13,9 +13,13 @@ import {
 } from "../../utils/calculations";
 import { loadFromLocalStorage } from "../../utils/localStorage";
 import { useDispatch, useSelector } from "react-redux";
-import { getSingleInvoice } from "../../store/invoicesSlice";
+import {
+  clearSelectedInvoice,
+  getSingleInvoice,
+} from "../../store/invoicesSlice";
 const InvoiceForm = ({ onSubmit }) => {
   const { id } = useParams();
+  const navigation = useNavigate();
   const invoiceToEdit = useSelector((state) => state.invoices.selectedInvoice);
   const dispatch = useDispatch();
   const defaultValues = {
@@ -27,11 +31,14 @@ const InvoiceForm = ({ onSubmit }) => {
     status: "Draft",
   };
   const [initialValues, setInitialValues] = useState(defaultValues);
+
   useEffect(() => {
     if (id) {
       dispatch(getSingleInvoice({ id }));
+    } else {
+      dispatch(clearSelectedInvoice());
     }
-  }, [id]);
+  }, [id, dispatch]);
   useEffect(() => {
     if (invoiceToEdit) {
       setInitialValues(invoiceToEdit);
@@ -238,7 +245,7 @@ const InvoiceForm = ({ onSubmit }) => {
               <div className="flex justify-end space-x-2">
                 <button
                   type="button"
-                  //  onClick={() => setIsModalOpen(false)}
+                  onClick={() => navigation("/")}
                   className="px-4 py-2 border rounded"
                 >
                   Cancel
