@@ -53,22 +53,25 @@ const InvoiceForm = ({ onSubmit }) => {
 
   // form validation schema
   const invoiceSchema = Yup.object().shape({
-    invoiceNumber: Yup.string().required("Required"),
-    clientName: Yup.string().required("Required"),
-    issueDate: Yup.date().required("Required"),
+    invoiceNumber: Yup.string().required("invoice number is required"),
+    clientName: Yup.string().required("client name is required"),
+    issueDate: Yup.date().required("issue date is required"),
     dueDate: Yup.date()
-      .required("Required")
+      .required("due date is required")
       .min(Yup.ref("issueDate"), "Due date must be after issue date"),
     items: Yup.array()
       .of(
         Yup.object().shape({
           name: Yup.string().required("Required"),
-          quantity: Yup.number().min(1, "Minimum 1").required("Required"),
-          unitPrice: Yup.number().min(1, "Required").required("Required"),
+          quantity: Yup.number()
+            .min(1, "Minimum quantity 1")
+            .required("Required"),
+          unitPrice: Yup.number()
+            .min(0, "minumum unit price 0")
+            .required("Required"),
         }),
       )
       .min(1, "At least one item is required"),
-    status: Yup.string().oneOf(["Draft", "Sent", "Paid"]).required("Required"),
   });
 
   return (
@@ -79,15 +82,21 @@ const InvoiceForm = ({ onSubmit }) => {
         validationSchema={invoiceSchema}
         onSubmit={(values, { resetForm }) => {
           onSubmit(
-            { ...values, subtotal, tax, total, tax_rate: TAX_RATE },
+            {
+              ...values,
+              subtotal,
+              tax,
+              total,
+              tax_rate: !id ? TAX_RATE : values?.tax_rate,
+            },
             resetForm,
             id || null,
           );
         }}
       >
         {({ values, setFieldValue, resetForm }) => {
-          subtotal = calculateSubtotal(values.items);
-          tax = calculateTax(subtotal, TAX_RATE);
+          subtotal = calculateSubtotal(values?.items);
+          tax = calculateTax(subtotal, id ? values?.tax_rate : TAX_RATE);
           total = calculateTotal(subtotal, tax);
           return (
             <Form className="space-y-4 ">
@@ -156,7 +165,9 @@ const InvoiceForm = ({ onSubmit }) => {
                             <th className="border px-2 py-1">Name</th>
                             <th className="border px-2 py-1">Quantity</th>
                             <th className="border px-2 py-1">Unit Price</th>
-                            <th className="border px-2 py-1">Actions</th>
+                            {values?.items?.length > 1 && (
+                              <th className="border px-2 py-1">Actions</th>
+                            )}
                           </tr>
                         </thead>
                         <tbody>
@@ -176,6 +187,11 @@ const InvoiceForm = ({ onSubmit }) => {
                               <td className="border px-2 py-1">
                                 <Field
                                   type="number"
+                                  min="1"
+                                  onKeyDown={(e) => {
+                                    if (e.key === "-" || e.key === "e")
+                                      e.preventDefault();
+                                  }}
                                   name={`items[${index}].quantity`}
                                   className="w-full border rounded px-1 py-0.5"
                                 />
@@ -188,6 +204,11 @@ const InvoiceForm = ({ onSubmit }) => {
                               <td className="border px-2 py-1">
                                 <Field
                                   type="number"
+                                  min="0"
+                                  onKeyDown={(e) => {
+                                    if (e.key === "-" || e.key === "e")
+                                      e.preventDefault();
+                                  }}
                                   name={`items[${index}].unitPrice`}
                                   className="w-full border rounded px-1 py-0.5"
                                 />
@@ -197,15 +218,17 @@ const InvoiceForm = ({ onSubmit }) => {
                                   className="text-red-500 text-xs"
                                 />
                               </td>
-                              <td className="border px-2 py-1 text-center">
-                                <button
-                                  type="button"
-                                  onClick={() => remove(index)}
-                                  className="px-2 py-2 bg-red-500 text-white rounded text-sm"
-                                >
-                                  <RiDeleteBinLine />
-                                </button>
-                              </td>
+                              {values?.items?.length > 1 && (
+                                <td className="border px-2 py-1 text-center">
+                                  <button
+                                    type="button"
+                                    onClick={() => remove(index)}
+                                    className="px-2 py-2 bg-red-500 text-white rounded text-sm"
+                                  >
+                                    <RiDeleteBinLine />
+                                  </button>
+                                </td>
+                              )}
                             </tr>
                           ))}
                         </tbody>
@@ -221,7 +244,8 @@ const InvoiceForm = ({ onSubmit }) => {
                   Subtotal: ${subtotal.toFixed(2)}
                 </div>
                 <div className="font-medium bg-gray-100 p-2 rounded">
-                  Tax ({(TAX_RATE * 100).toFixed(2)}%): ${tax.toFixed(2)}
+                  Tax ({((id ? values?.tax_rate : TAX_RATE) * 100).toFixed(2)}
+                  %): ${tax.toFixed(2)}
                 </div>
                 <div className="font-bold bg-gray-100 p-2 rounded">
                   Total: ${total.toFixed(2)}

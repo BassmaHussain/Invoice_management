@@ -9,7 +9,12 @@ const STORAGE_KEY = "invoices";
 const initialState = {
   invoices: loadFromLocalStorage(STORAGE_KEY) || [],
   selectedInvoice: null,
-  TAX_RATE: 0.15,
+  TAX_RATE: 0.14,
+  userDummyData: {
+    name: "amr faisal",
+    email: "account@gmail.com",
+    role: "super_admin",
+  },
 };
 
 const invoiceSlice = createSlice({
